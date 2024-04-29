@@ -1,4 +1,4 @@
-package com.adarshsiva.bicubicinterpolation;
+package com.adarshsiva.heatmap.colors;
 
 /**
  *

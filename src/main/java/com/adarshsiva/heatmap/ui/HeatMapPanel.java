@@ -1,5 +1,6 @@
-package com.adarshsiva.bicubicinterpolation;
+package com.adarshsiva.heatmap.ui;
 
+import com.adarshsiva.heatmap.model.HeatMapModel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -19,15 +20,12 @@ public class HeatMapPanel extends JPanel {
     HeatMapModel model;
 
     public HeatMapPanel() {
-    
     }
-	
+
     public void setModel(HeatMapModel model) {
         this.model = model;
         repaint();
     }
-
-    private final int heatPixelSize = 2;
 
     private final int inset = 3;
 
@@ -51,10 +49,26 @@ public class HeatMapPanel extends JPanel {
     private final int minHeatScaleHeight = 20;
 
     @Override
+    public void printAll(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(Color.white);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+        paintHeatMap(g2d);
+    }
+
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         Graphics2D g2d = (Graphics2D) g;
+        paintHeatMap(g2d);
+    }
+
+
+    private void paintHeatMap(Graphics2D g2d) {
+
+        if(model == null)
+            return;
 
         g2d.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -115,12 +129,13 @@ public class HeatMapPanel extends JPanel {
 
 
     // Paint the title and return the height used up for the title
-    private int paintTitle(Graphics2D g2d)
-    {
+    private int paintTitle(Graphics2D g2d) {
         int titleHeight = inset;
         String title = model.getTitle();
         double width = getWidth();
         double height = getHeight();
+
+        g2d.setColor(Color.black);
 
         if(title != null && !title.trim().isEmpty())
         {
@@ -138,8 +153,7 @@ public class HeatMapPanel extends JPanel {
     }
 
     // Paint the Y Axis Label and return the width used up for the Y axis label
-    private int paintYAxisLabel(Graphics2D g2d, Font axisLabelFont)
-    {
+    private int paintYAxisLabel(Graphics2D g2d, Font axisLabelFont) {
         int yAxisLabelWidth = inset;
 
         String yAxisLabel = model.getYAxisLabel();
@@ -161,8 +175,7 @@ public class HeatMapPanel extends JPanel {
     }
 
     // Paint the X Axis Label and return the height used up for the X axis label
-    private int paintXAxisLabel(Graphics2D g2d, Font axisLabelFont)
-    {
+    private int paintXAxisLabel(Graphics2D g2d, Font axisLabelFont) {
         int xAxisLabelHeight = inset;
         int width = getWidth();
         int height = getHeight();
@@ -183,6 +196,7 @@ public class HeatMapPanel extends JPanel {
 
     // Draw X-axis tick marks and labels
     private void paintXTickMarks(Graphics2D g2d, Font tickLabelFont, int xStart, int xEnd, int y) {
+        boolean flipX = model.isFlipX();
         int maxNumTicks = (int)((xEnd - xStart) * numTickFactor);
         if(maxNumTicks < 3)
             maxNumTicks = 3;
@@ -194,7 +208,11 @@ public class HeatMapPanel extends JPanel {
         for (double x = numScaleX.niceMin; x <= numScaleX.niceMax; x += numScaleX.tickSpacing) {
             String tickLabel = formatDouble(x);
             Rectangle2D tickRect = fm.getStringBounds(tickLabel, g2d);
-            int xCoord = (int) ((x - minX) / (maxX - minX) * (xEnd - xStart)) + xStart;
+            int xCoord;
+            if(flipX)
+                xCoord = xEnd - (int) ((x - minX) / (maxX - minX) * (xEnd - xStart)) ;
+            else
+                xCoord = xStart  + (int) ((x - minX) / (maxX - minX) * (xEnd - xStart));
             g2d.setColor(Color.BLACK);
             g2d.drawLine(xCoord, y, xCoord, y + tickLength);
             g2d.drawString(tickLabel, xCoord - (int)(tickRect.getWidth()/2.0),
@@ -227,6 +245,7 @@ public class HeatMapPanel extends JPanel {
     private void paintYTickMarks(Graphics2D g2d, Font tickLabelFont, int yStart, int yEnd, int x) {
         double minY = model.getMinY();
         double maxY = model.getMaxY();
+        boolean flipY = model.isFlipY();
         int maxNumTicks = (int)((yStart - yEnd) * numTickFactor);
         if(maxNumTicks < 3)
             maxNumTicks = 3;
@@ -235,7 +254,11 @@ public class HeatMapPanel extends JPanel {
         g2d.setColor(Color.BLACK);
         FontMetrics fm = g2d.getFontMetrics();
         for (double y = numScaleY.niceMin; y <= numScaleY.niceMax; y += numScaleY.tickSpacing) {
-            int yCoord = (int)(yStart - (int) ((y - minY) / (maxY - minY) * (yStart - yEnd)));
+            int yCoord;
+            if(flipY)
+                yCoord = (int)(yEnd + (int) ((y - minY) / (maxY - minY) * (yStart - yEnd)));
+            else
+                yCoord = (int)(yStart - (int) ((y - minY) / (maxY - minY) * (yStart - yEnd)));
             g2d.drawLine(x - tickLength, yCoord, x, yCoord);
             String tickLabel = formatDouble(y);
             g2d.drawString(tickLabel, (int)(x - fm.getStringBounds(tickLabel, g2d).getWidth() - tickLength - inset), (int)(yCoord + fm.getAscent()/2.0 - fm.getDescent()/2.0));
@@ -250,10 +273,14 @@ public class HeatMapPanel extends JPanel {
         double maxY = model.getMaxY();
         double heatMin = model.getMinHeatValue();
         double heatMax = model.getMaxHeatValue();
+        boolean flipX = model.isFlipX();
+        boolean flipY = model.isFlipY();
         Color[] heatColors = model.getHeatColors();
 
         double xPixelFactor = (maxX - minX) / width;
         double yPixelFactor = (maxY - minY) / height;
+
+        int heatPixelSize = model.getHeatPixelSize();
         for (int i = 0; i < width; i += heatPixelSize)
         {
             for (int j = 0; j < height; j += heatPixelSize)
@@ -263,7 +290,21 @@ public class HeatMapPanel extends JPanel {
                 double value = model.getHeatValue(xVal, yVal);
                 Color color = getColor(value, heatMin, heatMax, heatColors);
                 g2d.setColor(color);
-                g2d.fillRect(i+topX, topY + height - j - heatPixelSize , heatPixelSize, heatPixelSize);
+
+                int xCoord;
+                int yCoord;
+
+                if(flipX)
+                    xCoord = topX + width - i - heatPixelSize;
+                else
+                    xCoord = topX + i;
+
+                if(flipY)
+                    yCoord = topY + j;
+                else
+                    yCoord = topY + height - j - heatPixelSize;
+
+                g2d.fillRect(xCoord, yCoord , heatPixelSize, heatPixelSize);
             }
         }
     }
@@ -311,6 +352,7 @@ public class HeatMapPanel extends JPanel {
         int heatScaleX = (int) (width - ((totalWidth + heatScaleWidth)/2.0));
 
         g2d.setFont(tickFont);
+        g2d.setColor(Color.black);
         g2d.drawString(maxLabel, (int)(width - ((totalWidth + maxLabelBounds.getWidth())/2.0)),
                (int)(heatScaleY - fm.getDescent() - inset));
 
@@ -323,7 +365,7 @@ public class HeatMapPanel extends JPanel {
         }
         g2d.setColor(Color.black);
 
-        g2d.drawString(minLabel, (int)(width - ((totalWidth + maxLabelBounds.getWidth())/2.0)),
+        g2d.drawString(minLabel, (int)(width - ((totalWidth + minLabelBounds.getWidth())/2.0)),
                (int)(heatScaleY + fm.getAscent() + inset));
 
         return totalWidth;
@@ -386,7 +428,7 @@ public class HeatMapPanel extends JPanel {
             this.niceMax = Math.floor(maxPoint / tickSpacing) * tickSpacing;
         }
 
-
+        //https://stackoverflow.com/a/16363437
         private double niceNum(double range, boolean round) {
             double exponent;
             double fraction;

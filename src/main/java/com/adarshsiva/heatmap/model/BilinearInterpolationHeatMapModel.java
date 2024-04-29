@@ -1,13 +1,12 @@
-package com.adarshsiva.bicubicinterpolation;
+package com.adarshsiva.heatmap.model;
 
 import java.awt.Color;
-import org.apache.commons.math3.analysis.interpolation.PiecewiseBicubicSplineInterpolatingFunction;
 
 /**
- * Class that implements the HeatMapModel interface using bicubic interpolation
+ * Class that implements the HeatMapModel interface using Bicubic interpolation
  * @author Adarsh
  */
-public class BicubicInterpolationHeatMapModel implements HeatMapModel {
+public class BilinearInterpolationHeatMapModel implements HeatMapModel {
     double maxX, minX, maxY, minY;
     double minHeat;
     double maxHeat;
@@ -15,28 +14,42 @@ public class BicubicInterpolationHeatMapModel implements HeatMapModel {
     String xAxisLabel;
     String yAxisLabel;
     Color[] heatColors;
+    int heatPixelSize;
+    boolean flipX;
+    boolean flipY;
 
-    PiecewiseBicubicSplineInterpolatingFunction function;
+    BilinearInterpolation function;
 
-    public BicubicInterpolationHeatMapModel(double[] xcoords, double[] ycoords, double[][] data, double dataMin, double dataMax,
-            Color[] heatColors, String title, String xAxisLabel, String yAxisLabel) {
+    public BilinearInterpolationHeatMapModel(double[] xcoords, double[] ycoords, double[][] data, double dataMin, double dataMax,
+            Color[] heatColors, int heatPixelSize, String title, String xAxisLabel, String yAxisLabel, boolean flipX, boolean flipY)
+    {
         minX = xcoords[0];
         maxX = xcoords[xcoords.length - 1];
         minY = ycoords[0];
         maxY = ycoords[ycoords.length - 1];
-        function = new PiecewiseBicubicSplineInterpolatingFunction(xcoords, ycoords, data);
+        function = new BilinearInterpolation(xcoords, ycoords, data);
         minHeat = dataMin;
         maxHeat = dataMax;
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
         this.heatColors = heatColors;
+        this.heatPixelSize = heatPixelSize;
         this.title = title;
+        this.flipX = flipX;
+        this.flipY = flipY;
     }
 
     @Override
-    public double getHeatValue(double x, double y) {
-        
-        return function.value(x, y);
+    public double getHeatValue(double x, double y)
+    {
+        try
+        {
+            return function.interpolate(x, y);
+        }
+        catch(Exception ex)
+        {
+            return Double.NaN;
+        }
     }
 
     @Override
@@ -85,8 +98,24 @@ public class BicubicInterpolationHeatMapModel implements HeatMapModel {
     }
 
     @Override
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
+    }
+
+    @Override
+    public int getHeatPixelSize() {
+        return heatPixelSize;
+    }
+
+    @Override
+    public boolean isFlipX()
+    {
+        return flipX;
+    }
+
+    @Override
+    public boolean isFlipY()
+    {
+        return flipY;
     }
 }

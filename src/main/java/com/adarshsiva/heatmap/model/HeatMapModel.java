@@ -1,4 +1,4 @@
-package com.adarshsiva.bicubicinterpolation;
+package com.adarshsiva.heatmap.model;
 
 import java.awt.Color;
 
@@ -76,6 +76,27 @@ public interface HeatMapModel {
 
     /**
      * Provide a title for the Heatmap
+     * @return Title for the heatmap
      */
     String getTitle();
+
+
+    /**
+     * Provide the pixel size for each heat value 
+     * @return 
+     */
+    int getHeatPixelSize();
+
+
+    /**
+     * Whether X Axis should be flipped
+     * @return True if X Axis needs to be flipped
+     */
+    boolean isFlipX();
+
+    /**
+     * Whether Y Axis should be flipped
+     * @return True if Y Axis needs to be flipped
+     */
+    boolean isFlipY();
 }

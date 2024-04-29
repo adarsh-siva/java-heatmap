@@ -1,4 +1,7 @@
-package com.adarshsiva.bicubicinterpolation;
+package com.adarshsiva.heatmap;
+import com.adarshsiva.heatmap.ui.HeatMapPanel;
+import com.adarshsiva.heatmap.model.BicubicInterpolationHeatMapModel;
+import com.adarshsiva.heatmap.colors.HeatMapColors;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 /**
@@ -13,7 +16,7 @@ public class BicubicHeatMapExample extends JFrame {
         setSize(800, 800);
         setLocationRelativeTo(null);
         BicubicInterpolationHeatMapModel model = new BicubicInterpolationHeatMapModel(x,y,data, dataMin, dataMax, HeatMapColors.INFERNO_COLORS,
-                "Title Xyg", "X Axis gyY", "Y Axis gyY" );
+                2, "Title", "X Axis", "Y Axis", false, false );
         
         HeatMapPanel heatmapPanel = new HeatMapPanel();
         heatmapPanel.setModel(model);
