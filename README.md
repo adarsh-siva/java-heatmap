@@ -8,12 +8,16 @@ To generate a heatmap, create a heatmap model using a X vector, Y vector and the
 Create a HeatMapPanel which extends JPanel and set the model. For more details see the examples in the source repo.
 Here is a summary of the Java example code.
 ```
-  
         BilinearInterpolationHeatMapModel model = new BilinearInterpolationHeatMapModel(x,y,data, dataMin, dataMax, HeatMapColors.INFERNO_COLORS,
                 2, "Title", "X Axis ", "Y Axis", false, false );
 
         HeatMapPanel heatmapPanel = new HeatMapPanel();
         heatmapPanel.setModel(model);
-        add(heatmapPanel,BorderLayout.CENTER);
-		
+        add(heatmapPanel,BorderLayout.CENTER);		
 ```
+
+Bi-Cubic Example: 
+![Bi-Cubic Example Image](https://github.com/adarsh-siva/java-heatmap/blob/master/src/main/java/com/adarshsiva/heatmap/bicubic-example.png?raw=true)
+
+Bi-Linear Example
+![Bi-Linear Example Image](https://github.com/adarsh-siva/java-heatmap/blob/master/src/main/java/com/adarshsiva/heatmap/bilinear-example.png?raw=true)
