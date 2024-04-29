@@ -16,8 +16,8 @@ Here is a summary of the Java example code.
         add(heatmapPanel,BorderLayout.CENTER);		
 ```
 
-Bi-Cubic Example: 
+## Bi-Cubic Example: 
 ![Bi-Cubic Example Image](https://github.com/adarsh-siva/java-heatmap/blob/master/src/main/java/com/adarshsiva/heatmap/bicubic-example.png?raw=true)
 
-Bi-Linear Example
+## Bi-Linear Example:
 ![Bi-Linear Example Image](https://github.com/adarsh-siva/java-heatmap/blob/master/src/main/java/com/adarshsiva/heatmap/bilinear-example.png?raw=true)
