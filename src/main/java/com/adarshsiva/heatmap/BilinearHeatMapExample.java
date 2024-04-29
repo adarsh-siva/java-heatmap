@@ -17,7 +17,7 @@ public class BilinearHeatMapExample extends JFrame {
         setLocationRelativeTo(null);
         
         BilinearInterpolationHeatMapModel model = new BilinearInterpolationHeatMapModel(x,y,data, dataMin, dataMax, HeatMapColors.INFERNO_COLORS,
-                2, "Title", "X Axis ", "Y Axis", false, false );
+                2, "Bi-linear Heatmap example", "X Axis ", "Y Axis", false, false );
 
         HeatMapPanel heatmapPanel = new HeatMapPanel();
         heatmapPanel.setModel(model);
@@ -25,28 +25,20 @@ public class BilinearHeatMapExample extends JFrame {
     }
 
       public static void main(String[] args) {
-        int gridSize = 32;
-
-        final double[][] testData = new double[gridSize][gridSize]; // Replace this with your actual data
-        final double[] x = new double[gridSize];
-        final double[] y = new double[gridSize];
-        double dataMin = Double.MAX_VALUE;
-        double dataMax = -Double.MAX_VALUE;
-
-        for(int i = 0; i < testData.length; i++){
-            x[i] = i - ((gridSize-1)/2);
-            y[i] = i - ((gridSize-1)/2);
-            for(int j = 0; j < testData[0].length; j++)
-            {
-                testData[i][j] =  Math.sin(Math.sqrt(Math.pow(i-((gridSize-1)/2), 2) + Math.pow(j-((gridSize-1)/2), 2))) * 1000;
-                if(testData[i][j] < dataMin )
-                    dataMin = testData[i][j];
-                if(testData[i][j] > dataMax )
-                    dataMax = testData[i][j];
-            }
-        }
   
-        BilinearHeatMapExample example = new BilinearHeatMapExample(x, y, testData, dataMin, dataMax);
+        final double[] x = { 10, 20, 30, 40, 50};
+        final double[] y = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+
+        final double[][] testData = {        
+            {100.0, 50.0, 25.0, 0.0, 0.0, 0.0, 0.0, 0.0, 50.0, 100.0 },
+            {0.0, 100.0, 50.0, 25.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+            {0.0, 0.0, 100.0, 50.0, 25.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+            {0.0, 0.0, 0.0, 100.0, 50.0, 25.0, 0.0, 0.0, 0.0, 0.0 },
+            {100.0, 50.0, 0.0, 0.0, 100.0, 50.0, 25.0, 0.0, 0.0, 0.0}
+        };
+
+  
+        BilinearHeatMapExample example = new BilinearHeatMapExample(x, y, testData, 0.0, 100.0);
         example.setVisible(true);
     }
 }

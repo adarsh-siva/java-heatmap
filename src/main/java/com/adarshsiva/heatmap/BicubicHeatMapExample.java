@@ -16,7 +16,7 @@ public class BicubicHeatMapExample extends JFrame {
         setSize(800, 800);
         setLocationRelativeTo(null);
         BicubicInterpolationHeatMapModel model = new BicubicInterpolationHeatMapModel(x,y,data, dataMin, dataMax, HeatMapColors.INFERNO_COLORS,
-                2, "Title", "X Axis", "Y Axis", false, false );
+                2, "Bi-cubic Heatmap example", "X Axis", "Y Axis", false, false );
         
         HeatMapPanel heatmapPanel = new HeatMapPanel();
         heatmapPanel.setModel(model);
@@ -45,7 +45,7 @@ public class BicubicHeatMapExample extends JFrame {
             }
         }
   
-        BicubicHeatMapExample example = new BicubicHeatMapExample(x, y, testData, dataMin, dataMax);
+        BicubicHeatMapExample example = new BicubicHeatMapExample(x, y, testData, Math.floor(dataMin), Math.ceil(dataMax));
         example.setVisible(true);
     }
 }
